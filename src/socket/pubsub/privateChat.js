@@ -120,7 +120,8 @@ const privateChat = async (socket, io) => {
       const user2 = await getUserById(room.users[1]);
       const user1SocketId = user1.socketId;
       const user2SocketId = user2.socketId;
-
+      await deleteUserBySocketId(user1SocketId);
+      await deleteUserBySocketId(user2SocketId);
       await deleteRoomById(roomId);
 
       io.to(user1SocketId).emit('end video request');
