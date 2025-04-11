@@ -90,16 +90,7 @@ async function getRoomUsersSocketId(roomId) {
 async function deleteRoomById(roomId) {
   try {
     const id = new ObjectId(roomId);
-
-    // set the isBusy field in user doc to false when user is added to a room
-    const room = await client.db(dbName).collection(collectionName).findOne({ _id: id });
-    const user1 = await client.db(dbName).collection('users').findOne({ _id: room.users[0] });
-    const user2 = await client.db(dbName).collection('users').findOne({ _id: room.users[1] });
-    await setUserStatus(user1._id, false);
-    await setUserStatus(user2._id, false);
-
     const result = await client.db(dbName).collection(collectionName).findOneAndDelete({ _id: id });
-
     return result.value;
   } catch (error) {
     console.error(error);

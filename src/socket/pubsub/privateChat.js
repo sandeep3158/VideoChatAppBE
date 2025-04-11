@@ -1,6 +1,6 @@
 const { Server, Socket } = require('socket.io');
 const { createRoom, addUserBySocketId, getRoomUsersSocketId, getRoom, deleteRoomById } = require('../controllers/room');
-const { getUserById } = require('../controllers/users');
+const { getUserById, deleteUserBySocketId } = require('../controllers/users');
 
 /**
  * Socket event listener functions for sending and receiving
@@ -114,8 +114,6 @@ const privateChat = async (socket, io) => {
   socket.on('end chat', async (roomId) => {
     try {
       const room = await getRoom(roomId);
-      console.log(`end chat for room ${roomId}`);
-
       const user1 = await getUserById(room.users[0]);
       const user2 = await getUserById(room.users[1]);
       const user1SocketId = user1.socketId;
@@ -123,9 +121,6 @@ const privateChat = async (socket, io) => {
       await deleteUserBySocketId(user1SocketId);
       await deleteUserBySocketId(user2SocketId);
       await deleteRoomById(roomId);
-
-      io.to(user1SocketId).emit('end video request');
-      io.to(user2SocketId).emit('end video request');
       io.to(roomId).emit('close chat room');
     } catch (error) {
       console.error(error);
